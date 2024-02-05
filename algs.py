@@ -1,5 +1,16 @@
 from PIL import Image, ImageFilter
-im = Image.open("caroline.jpg")
+
+import sys
+
+argnum = len(sys.argv)
+
+if(argnum > 1):
+    imagepath = sys.argv[1]
+else:
+    print("NO PATH SPECIFIED! PLEASE SPECIFY A PATH AND TRY AGAIN\n")
+    sys.exit()
+
+im = Image.open(imagepath)
 im = im.resize([int(im.width / 4), int(im.height / 4)])
 
 im = im.convert('L')
@@ -90,8 +101,22 @@ def sierra_dither(image):
     ]
     return generalpurpose_dither(image, matrix, 1.0 / 32)
 
+def atkinson_dither(image):
+    matrix = [
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 1, 1],
+        [0, 1, 1, 1, 0],
+        [0, 0, 1, 0, 0]
+    ]
+    return generalpurpose_dither(image, matrix, 1.0 / 8)
+
 
 dxfimg = sierra_dither(im)
+
+floyd_stienburg(im).show()
+sierra_dither(im).show()
+atkinson_dither(im).show()
 
 import ezdxf
 from ezdxf import colors
